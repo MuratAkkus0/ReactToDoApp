@@ -75,3 +75,9 @@
 #editInput:focus {
   outline: 1px solid #ccc;
 }
+
+@media screen and (max-width: 768px) {
+  .app__list--area {
+    width: 98%;
+  }
+}
