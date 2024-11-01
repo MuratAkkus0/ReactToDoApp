@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import AddTask from "./components/AddTask";
 import TaskList from "./components/TaskList";
 import TaskItem from "./components/TaskItem";
+import { DiCelluloid } from "react-icons/di";
 
 function App() {
   const [newTask, setNewTask] = useState("");
@@ -19,9 +20,8 @@ function App() {
     setTaskList(items ?? []);
   };
   const delItemFromLS = (index) => {
-    taskList.splice(index, 1);
-    setTaskList([...taskList]);
-    setItemsToLS();
+    const updatedTaskList = taskList.filter((_, i) => i !== index);
+    setTaskList(updatedTaskList);
   };
 
   useEffect(() => {
@@ -30,19 +30,30 @@ function App() {
 
   const onClickAddBtn = () => {
     // let newTaskList = taskList; // Bu kodda tasklist dogrudan esitlenip degistiriliyor. bu boyle olursa react degisikligi algilamaz.
+    if (!newTask) return;
     let newTaskList = [...taskList, newTask];
     setTaskList(newTaskList);
-    // setNewTask(""); // neden calismiyor bilmiyorum
+    setNewTask("");
   };
 
   const onClickDelBtn = (e) => {
-    // debugger;
+    let childIndex = getCurrentElementId(e);
+    delItemFromLS(childIndex);
+  };
+
+  const onChangeTask = (e, value) => {
+    let index = getCurrentElementId(e);
+    let newTaskList = [...taskList];
+    newTaskList.splice(index, 1, value);
+    setTaskList(newTaskList);
+  };
+
+  const getCurrentElementId = (e) => {
     let currentLiElement = e.target.closest(".app__list--task");
     let parentOfLiElement = currentLiElement.parentElement;
     let childrenArray = Array.from(parentOfLiElement.children);
     let childIndex = childrenArray.indexOf(currentLiElement);
-    delItemFromLS(childIndex);
-    // currentLiElement.remove();
+    return childIndex;
   };
 
   return (
@@ -53,11 +64,21 @@ function App() {
         onChangeTask={(e) => setNewTask(e.target.value)}
         onClickAddBtn={onClickAddBtn}
       />
-      <TaskList>
-        {taskList.map((item, index) => (
-          <TaskItem key={index} taskText={item} onClickDelBtn={onClickDelBtn} />
-        ))}
-      </TaskList>
+
+      {taskList.length ? (
+        <TaskList>
+          {taskList.map((item, index) => (
+            <TaskItem
+              key={index}
+              taskText={item}
+              onClickDelBtn={onClickDelBtn}
+              onChangeTask={onChangeTask}
+            />
+          ))}
+        </TaskList>
+      ) : (
+        <div id="allTasksComplated">All tasks completed</div>
+      )}
     </>
   );
 }

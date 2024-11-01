@@ -1,15 +1,23 @@
+import PropTypes from "prop-types";
 import { MdAdd } from "react-icons/md";
 import "../assets/styles/addTaskCard.css";
 
+AddTask.propTypes = {
+  taskValue: PropTypes.string,
+  onChangeTask: PropTypes.func.isRequired,
+  onClickAddBtn: PropTypes.func.isRequired,
+};
+
 export default function AddTask(props) {
-  const { newTask, onChangeTask, onClickAddBtn } = props;
+  const { taskValue, onChangeTask, onClickAddBtn } = props;
+
   return (
     <>
       <div className="app__input--area">
         <div className="app__input--title">Add Task</div>
         <div className="app__input--container">
           <input
-            value={newTask}
+            value={taskValue}
             onChange={onChangeTask}
             onKeyDown={(e) => (e.key === "Enter" ? onClickAddBtn() : true)}
             className="app__input"
